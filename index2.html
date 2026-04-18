@@ -1,0 +1,167 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2868
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html>\
+<head>\
+  <title>Paddy Business System</title>\
+  <style>\
+    body \{ font-family: Arial; margin:0; display:flex; \}\
+    .sidebar \{\
+      width:220px; background:#064e3b; color:white; height:100vh;\
+      padding:20px;\
+    \}\
+    .sidebar button \{\
+      display:block; width:100%; margin:10px 0;\
+      padding:10px; background:none; border:none; color:white;\
+      text-align:left; cursor:pointer;\
+    \}\
+    .content \{ flex:1; padding:20px; \}\
+    input, select \{ padding:8px; margin:5px; \}\
+    table \{ border-collapse: collapse; width:100%; margin-top:10px;\}\
+    th, td \{ border:1px solid #ccc; padding:8px; \}\
+  </style>\
+</head>\
+\
+<body>\
+\
+<div class="sidebar">\
+  <h2>System</h2>\
+  <button onclick="show('dashboard')">Dashboard</button>\
+  <button onclick="show('farmers')">Farmers</button>\
+  <button onclick="show('transport')">Transport</button>\
+  <button onclick="show('employees')">Employees</button>\
+</div>\
+\
+<div class="content">\
+\
+<!-- DASHBOARD -->\
+<div id="dashboard">\
+  <h2>Dashboard</h2>\
+  <p>Inventory: <span id="inventory">0</span> Kg</p>\
+  <p>Farmers: <span id="farmerCount">0</span></p>\
+</div>\
+\
+<!-- FARMERS -->\
+<div id="farmers" style="display:none;">\
+  <h2>Farmers</h2>\
+\
+  <input id="fname" placeholder="Name">\
+  <input id="fphone" placeholder="Phone">\
+  <button onclick="addFarmer()">Add Farmer</button>\
+\
+  <h3>Purchase</h3>\
+  <select id="farmerSelect"></select>\
+  <input id="weight" placeholder="Weight Kg" type="number">\
+  <button onclick="addPurchase()">Add</button>\
+\
+  <table id="farmerTable"></table>\
+</div>\
+\
+<!-- TRANSPORT -->\
+<div id="transport" style="display:none;">\
+  <h2>Transport</h2>\
+  <input id="tweight" placeholder="Weight Kg" type="number">\
+  <button onclick="transport()">Send</button>\
+</div>\
+\
+<!-- EMPLOYEES -->\
+<div id="employees" style="display:none;">\
+  <h2>Employees</h2>\
+\
+  <input id="ename" placeholder="Name">\
+  <input id="salary" placeholder="Salary">\
+  <button onclick="addEmployee()">Add</button>\
+\
+  <table id="empTable"></table>\
+</div>\
+\
+</div>\
+\
+<script>\
+\
+// DATA\
+let farmers = [];\
+let inventory = 0;\
+let employees = [];\
+\
+// NAVIGATION\
+function show(tab) \{\
+  document.querySelectorAll('.content > div').forEach(d => d.style.display='none');\
+  document.getElementById(tab).style.display='block';\
+\}\
+\
+// FARMER\
+function addFarmer() \{\
+  let name = fname.value;\
+  let phone = fphone.value;\
+\
+  farmers.push(\{ id: Date.now(), name, phone, total:0 \});\
+\
+  updateFarmers();\
+\}\
+\
+function addPurchase() \{\
+  let id = farmerSelect.value;\
+  let weight = parseFloat(document.getElementById("weight").value);\
+\
+  farmers.forEach(f => \{\
+    if (f.id == id) f.total += weight;\
+  \});\
+\
+  inventory += weight;\
+  updateFarmers();\
+\}\
+\
+// TRANSPORT\
+function transport() \{\
+  let w = parseFloat(document.getElementById("tweight").value);\
+  if (w > inventory) return alert("Not enough stock");\
+  inventory -= w;\
+  updateFarmers();\
+\}\
+\
+// EMPLOYEE\
+function addEmployee() \{\
+  employees.push(\{\
+    name: ename.value,\
+    salary: salary.value\
+  \});\
+  updateEmployees();\
+\}\
+\
+// UPDATE UI\
+function updateFarmers() \{\
+  document.getElementById("inventory").innerText = inventory;\
+  document.getElementById("farmerCount").innerText = farmers.length;\
+\
+  let table = "<tr><th>Name</th><th>Phone</th><th>Total Kg</th></tr>";\
+  let select = "";\
+\
+  farmers.forEach(f => \{\
+    table += `<tr><td>$\{f.name\}</td><td>$\{f.phone\}</td><td>$\{f.total\}</td></tr>`;\
+    select += `<option value="$\{f.id\}">$\{f.name\}</option>`;\
+  \});\
+\
+  document.getElementById("farmerTable").innerHTML = table;\
+  document.getElementById("farmerSelect").innerHTML = select;\
+\}\
+\
+function updateEmployees() \{\
+  let table = "<tr><th>Name</th><th>Salary</th></tr>";\
+\
+  employees.forEach(e => \{\
+    table += `<tr><td>$\{e.name\}</td><td>$\{e.salary\}</td></tr>`;\
+  \});\
+\
+  document.getElementById("empTable").innerHTML = table;\
+\}\
+\
+</script>\
+\
+</body>\
+</html>}
